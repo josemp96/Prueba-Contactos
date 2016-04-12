@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- your app's js -->
+    <script src="js/app.js"></script>
+  </head>
+  <body ng-app="starter">
+
+    <ion-pane>
+      <ion-header-bar class="bar-stable">
+        <h1 class="title">Ionic Blank Starter</h1>
+      </ion-header-bar>
+      <ion-content>
+              <div class="item item-input-inset">
+          <label class="item-input-wrapper">
+            <input type="text" placeholder="Nombre de contacto" id="nombre">
+          </label>
+        </div>
+        <div class="item item-input-inset">
+          <label class="item-input-wrapper">
+            <input type="text" placeholder="Nombre de contacto a crear" id="nombreCrear">
+          </label>
+        </div>
+        <div class="item item-input-inset">
+          <label class="item-input-wrapper">
+            <input type="text" placeholder="telefono de contacto a crear" id="telefonoCrear">
+          </label>
+        </div>
+        <button class="button button-block button-calm" onclick="init2()"> BUSCAR CONTACTO </button>
+        <button class="button button-block button-positive" onclick="init()"> MOSTRAR TODOS LOS CONTACTOS </button>
+        <button class="button button-block button-calm" onclick="init3()"> CREAR CONTACTO </button>
+
+
+        <div class="row responsive-sm" id="mobile"></div>
+
+
+        <script type="text/javascript">
+
+
+          function init() {
+            document.getElementById("mobile").innerHTML = "";
+            navigator.contacts.find([navigator.contacts.fieldType.id],gotContacts,errorHandler);
+          }
+
+          function init2(filtro) {
+            document.getElementById("mobile").innerHTML = "";
+            navigator.contacts.find([navigator.contacts.fieldType.id],searchContacts,errorHandler);
+          }
+          function init3() {
+            var contact = navigator.contacts.create();
+                            // specify both to support all devices
+            var name = new ContactName();
+            name.familyName = leerCampo2();
+            var phoneNumbers = [];
+    phoneNumbers[0] = new ContactField('MOVIL', leerCampo3(), false);
+    contact.phoneNumbers = phoneNumbers;
+            contact.name = name;
+            contact.save(onSaveSuccess,onSaveError);
+          }
+          function onSaveSuccess(contact) {
+            alert("Save Success");
+          }
+
+          // onSaveError: Failed to get the contacts
+          //
+          function onSaveError(contactError) {
+            alert("Error = " + contactError.code);
+          }
+          function errorHandler(e) {
+            console.log("errorHandler: "+e);
+          }
+
+          function gotContacts(c) {
+            console.log("gotContacts, number of results "+c.length);
+
+            mobileDiv = document.querySelector("#mobile");
+
+            /* Retriving phoneNumbers */
+            for(var i=0, len=c.length; i<len; i++) {
+              if(c[i].phoneNumbers && c[i].phoneNumbers.length > 0) {
+                  mobileDiv.innerHTML += "<p>"+c[i].id+"<br/>"+c[i].name.formatted+"<br/>"+c[i].phoneNumbers[0].value+"</p>";
+              }
+            }
+          }
+          function searchContacts(c) {
+            console.log("gotContacts, number of results "+c.length);
+
+            mobileDiv = document.querySelector("#mobile");
+
+            /* Retriving phoneNumbers */
+            for(var i=0, len=c.length; i<len; i++) {
+              if(c[i].phoneNumbers && c[i].phoneNumbers.length > 0) {
+                if(c[i].name.formatted==leerCampo()){
+                  mobileDiv.innerHTML += "<p>"+"<br/>"+c[i].name.formatted+"<br/>"+c[i].phoneNumbers[0].value+"</p>";
+                }
+              }
+            }
+          }
+
+          function leerCampo() {
+            var valorDelCampo = document.getElementById("nombre").value; return valorDelCampo;
+          }
+          function leerCampo2() {
+            var valorDelCampo = document.getElementById("nombreCrear").value; return valorDelCampo;
+          }
+          function leerCampo3() {
+            var valorDelCampo = document.getElementById("telefonoCrear").value; return valorDelCampo;
+          }
+
+        </script>
+      </ion-content>
+    </ion-pane>
+  </body>
+</html>
